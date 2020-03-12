@@ -5,6 +5,8 @@ from Softmax.linear_classifier import Softmax
 import Softmax.data_utils as du
 import torch
 from Net import Net
+import pickle
+
 
 #########################################################################
 # TODO:                                                                 #
@@ -23,25 +25,19 @@ def predict_usingPytorch(X):
     #########################################################################
     checkpoint = torch.load("Pytorch/model.ckpt")
     
-    if torch.cuda.is_available():
-        device = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc. 
-        print("Running on the GPU")
-    else:
-        device = torch.device("cpu")
-        print("Running on the CPU")
-
-    
-    if torch.cuda.is_available():
-        net = Net(n_feature=3072, n_hidden=500, n_output=10).cuda(device)     # define the network
-    else:
-        net = Net(n_feature=3072, n_hidden=500, n_output=10)
+   
+    net = Net(n_feature=3072, n_hidden=500, n_output=10)
     
     net.load_state_dict(checkpoint)
-    print(X.shape)
+    
+    X =torch.from_numpy(X)
+    X=X.float()
     predicted = net.predict(X).data
     #prediction = checkpoint(X)
 
-    y_pred=prediction.np()
+    scores=predicted.numpy()
+    y_pred = scores.argmax(axis=1)
+
     #########################################################################
     #                       END OF YOUR CODE                                #
     #########################################################################
@@ -54,11 +50,17 @@ def predict_usingSoftmax(X):
     # - Do the operation required to get the predictions                    #
     # - Return predictions in a numpy array                                 #
     #########################################################################
-    with open('softmax_weights.pkl', 'rb') as f:
-        W = pickle.load(f)
-    new_softmax = Softmax()
     
-    y_pred = new_softmax.predict(Xl)
+    with open('Softmax/softmax_weights.pkl', 'rb') as f:
+        W = pickle.load(f)
+        
+    
+    new_softmax = Softmax()
+    y_pred = np.zeros(X.shape[0])
+
+    
+    scores = np.dot(X,W)
+    y_pred = scores.argmax(axis=1)
 
     #########################################################################
     #                       END OF YOUR CODE                                #
@@ -68,6 +70,7 @@ def predict_usingSoftmax(X):
 def main(filename, group_number):
 
     X,Y = du.load_CIFAR_batch(filename)
+    print(X.shape, Y.shape)
     X = np.reshape(X, (X.shape[0], -1))
     mean_image = np.mean(X, axis = 0)
     X -= mean_image
@@ -75,6 +78,7 @@ def main(filename, group_number):
     X = np.hstack([X, np.ones((X.shape[0], 1))])
     prediction_softmax = predict_usingSoftmax(X)
     acc_softmax = sum(prediction_softmax == Y)/len(X)
+    print(prediction_pytorch.shape, Y.size)
     acc_pytorch = sum(prediction_pytorch == Y)/len(X)
     print("Group %s ... Softmax= %f ... Pytorch= %f"%(group_number, acc_softmax, acc_pytorch))
 

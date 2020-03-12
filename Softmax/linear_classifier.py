@@ -1,5 +1,5 @@
 import numpy as np
-from softmax import *
+from .softmax import *
 
 
 class LinearClassifier(object):
@@ -96,7 +96,9 @@ class LinearClassifier(object):
     # TODO:                                                                   #
     # Implement this method. Store the predicted labels in y_pred.            #
     ###########################################################################
-    scores = np.dot(X,self.W,)
+    print(X.shape,W.shape)
+    
+    scores = np.dot(X,self.W)
     y_pred = scores.argmax(axis=1)
 
     ###########################################################################

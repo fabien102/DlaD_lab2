@@ -1,4 +1,6 @@
 import torch
+from torch import nn
+from torch import optim
 import torch.nn.functional as F
 from torchvision import datasets, transforms
 import numpy as np
@@ -6,6 +8,8 @@ import torch.utils.data as utils
 import time
 import pdb
 from torch.utils.data.sampler import SubsetRandomSampler
+
+
 
 
 class Net(torch.nn.Module):
@@ -27,10 +31,8 @@ class Net(torch.nn.Module):
 
 
     def forward(self, x):
-        print("forward", x)
-        print(x.size())
+        #print(x.size())
         #x = x.view(x.size(0),-1)
-       
        
         ################################################################################
         # TODO:                                                                        #
@@ -50,10 +52,7 @@ class Net(torch.nn.Module):
     
     def predict(self, x):
         ''' This function for predicts classes by calculating the softmax '''
-        print("predict", x.shape)
         logits = self.forward(x)
         return F.softmax(logits)
 
 
-net = Net(n_feature=3072, n_hidden=500, n_output=10)
-print(net)  # net architecture
