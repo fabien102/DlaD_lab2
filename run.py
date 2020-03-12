@@ -23,7 +23,8 @@ def predict_usingPytorch(X):
     # - Do the operation required to get the predictions                    #
     # - Return predictions in a numpy array                                 #
     #########################################################################
-    checkpoint = torch.load("Pytorch/model.ckpt")
+    checkpoint = torch.load("Pytorch/model.ckpt",map_location=lambda storage, loc: storage)
+    
     
    
     net = Net(n_feature=3072, n_hidden=500, n_output=10)
