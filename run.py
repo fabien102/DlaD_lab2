@@ -30,7 +30,7 @@ def predict_usingPytorch(X):
     
     
    
-    net = Net(n_feature=3072, n_hidden=500, n_output=10)
+    net = Net(n_feature=3072, n_hidden=1024, n_output=10)
     
     net.load_state_dict(checkpoint)
     
